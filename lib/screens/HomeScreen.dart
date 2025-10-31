@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skycast/widgets/weatherDetailItem.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -100,21 +101,87 @@ class HomeScreen extends StatelessWidget {
             ),
 
                 // Flexible space pushes the middle section up/down as needed
-                const Expanded(
-                  // Placeholder for Step 3: Middle Section (Temp, Icon, Description)
-                  child: Center(
-                    child: Text(
-                      'Middle Section Placeholder',
-                      style: TextStyle(color: Colors.white, fontSize: 24),
-                    ),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // 1. Weather Icon (using a placeholder for now)
+                      const Icon(
+                        Icons.wb_sunny_rounded, // Placeholder icon
+                        color: Colors.white,
+                        size: 120,
+                      ),
+                      const SizedBox(height: 10),
+
+                      // 2. Big Temperature Text
+                      const Text(
+                        '32°C', // Dummy Temperature
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 96,
+                          fontWeight: FontWeight.w300, // Thin font weight looks modern
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+
+                      // 3. Weather Condition Text
+                      Text(
+                        dummyWeatherCondition.toUpperCase(), // Using the dummy variable
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+              ),
 
                 // Placeholder for Step 4: Bottom Section (Dashboard)
-                const Text(
-                  'Bottom Section Placeholder',
-                  style: TextStyle(color: Colors.white),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: Container(
+                padding: const EdgeInsets.all(20.0),
+                // 💡 Add a semi-transparent background to visually group the data
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2), // The "glassmorphism" base color
+                  borderRadius: BorderRadius.circular(15),
                 ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    // Detail 1: Feels Like Temperature
+                    WeatherDetailItem(
+                      icon: Icons.thermostat_outlined,
+                      label: 'Feels Like',
+                      value: '35°C', // Dummy Data
+                    ),
+
+                    // Separator Line
+                    const VerticalDivider(color: Colors.white54, width: 20, thickness: 1),
+
+                    // Detail 2: Wind Speed
+                    WeatherDetailItem(
+                      icon: Icons.air,
+                      label: 'Wind Speed',
+                      value: '15 km/h', // Dummy Data
+                    ),
+
+                    // Separator Line
+                    const VerticalDivider(color: Colors.white54, width: 20, thickness: 1),
+
+                    // Detail 3: Humidity
+                    WeatherDetailItem(
+                      icon: Icons.opacity,
+                      label: 'Humidity',
+                      value: '65%', // Dummy Data
+                    ),
+                  ],
+                ),
+              ),
+            ),
               ],
             ),
           ),
