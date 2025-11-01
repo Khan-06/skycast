@@ -54,22 +54,53 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         // 3. Use a SafeArea to ensure content isn't under the status bar
-        child: const SafeArea(
+        child: SafeArea(
           // This will contain all the screen's main sections
           child: Padding(
-            padding: EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0),
             // The Column will arrange the Top, Middle, and Bottom sections vertically
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Placeholder for Step 2: Top Section (City, Search, Date)
-                Text(
-                  'Top Section Placeholder',
-                  style: TextStyle(color: Colors.white),
+              Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // 1. Search Icon (for Phase 4)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.search, color: Colors.white, size: 30),
+                    onPressed: () {
+                      // TODO: Implement city search functionality in Phase 4
+                      print('Search pressed!');
+                    },
+                  ),
                 ),
 
+                // 2. City Name
+                const Text(
+                  'London, UK', // Dummy City Name
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+
+                // 3. Current Date
+                 Text(
+                  'Tuesday, October 29', // Dummy Date
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.8),
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+
                 // Flexible space pushes the middle section up/down as needed
-                Expanded(
+                const Expanded(
                   // Placeholder for Step 3: Middle Section (Temp, Icon, Description)
                   child: Center(
                     child: Text(
@@ -80,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                 ),
 
                 // Placeholder for Step 4: Bottom Section (Dashboard)
-                Text(
+                const Text(
                   'Bottom Section Placeholder',
                   style: TextStyle(color: Colors.white),
                 ),
