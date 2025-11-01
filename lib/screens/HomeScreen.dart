@@ -4,7 +4,7 @@ import 'package:skycast/widgets/weatherDetailItem.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  static const String dummyWeatherCondition = "Sunny";
+  static const String dummyWeatherCondition = "sunny";
 
   List<Color> _getBackgroundGradient(String condition) {
     switch (condition.toLowerCase()) {
