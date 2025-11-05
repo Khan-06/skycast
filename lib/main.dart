@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:skycast/screens/HomeScreen.dart';
+import 'package:skycast/screens/homeScreen.dart';
 
 void main() {
   runApp(const MyApp());
