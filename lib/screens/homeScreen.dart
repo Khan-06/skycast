@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:skycast/widgets/weatherDetailItem.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   static const String dummyWeatherCondition = "sunny";
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   List<Color> _getBackgroundGradient(String condition) {
     switch (condition.toLowerCase()) {
       case 'sunny':
@@ -43,7 +48,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gradientColors = _getBackgroundGradient(dummyWeatherCondition);
+    final gradientColors = _getBackgroundGradient(HomeScreen.dummyWeatherCondition);
     return Scaffold(
       body: Container(
         // 2. Apply the dynamic gradient background
@@ -127,7 +132,7 @@ class HomeScreen extends StatelessWidget {
 
                       // 3. Weather Condition Text
                       Text(
-                        dummyWeatherCondition.toUpperCase(), // Using the dummy variable
+                        HomeScreen.dummyWeatherCondition.toUpperCase(), // Using the dummy variable
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.9),
                           fontSize: 24,
