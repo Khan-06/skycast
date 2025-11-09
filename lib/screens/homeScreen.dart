@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:skycast/widgets/weatherDetailItem.dart';
 
+import '../services/weatherService.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -11,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   List<Color> _getBackgroundGradient(String condition) {
     switch (condition.toLowerCase()) {
       case 'sunny':
@@ -44,6 +47,14 @@ class _HomeScreenState extends State<HomeScreen> {
       default:
         return [Colors.blue, Colors.lightBlueAccent];
     }
+  }
+  final String cityName = "London";
+  late Future<WeatherModel> _weatherFuture;
+  @override
+  void initState() {
+    // TODO: implement initState
+    _weatherFuture = WeatherService.getCurrentWeather(cityName);
+    super.initState();
   }
 
   @override
