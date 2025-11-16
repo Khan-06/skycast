@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:skycast/widgets/weatherDetailItem.dart';
 
 import '../models/weatherModel.dart';
@@ -14,7 +15,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   final WeatherService _weatherService = WeatherService();
 
   List<Color> _getBackgroundGradient(String condition) {
@@ -51,7 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return [Colors.blue, Colors.lightBlueAccent];
     }
   }
-  final String cityName = "London";
+
+  final String cityName = "Pakistan";
   late Future<WeatherModel> _weatherFuture;
   @override
   void initState() {
@@ -62,150 +63,219 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final gradientColors = _getBackgroundGradient(HomeScreen.dummyWeatherCondition);
-    return Scaffold(
-      body: Container(
-        // 2. Apply the dynamic gradient background
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: gradientColors,
-          ),
-        ),
-        // 3. Use a SafeArea to ensure content isn't under the status bar
-        child: SafeArea(
-          // This will contain all the screen's main sections
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            // The Column will arrange the Top, Middle, and Bottom sections vertically
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Placeholder for Step 2: Top Section (City, Search, Date)
-              Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // 1. Search Icon (for Phase 4)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    icon: const Icon(Icons.search, color: Colors.white, size: 30),
-                    onPressed: () {
-                      // TODO: Implement city search functionality in Phase 4
-                      print('Search pressed!');
-                    },
-                  ),
+    final gradientColors = _getBackgroundGradient(
+      HomeScreen.dummyWeatherCondition,
+    );
+    return FutureBuilder<WeatherModel>(
+      future: _weatherFuture,
+      // The builder function runs every time the Future's state changes
+      builder: (context, snapshot) {
+        // --- A. Loading State (ConnectionState.waiting) ---
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show a loading spinner on a neutral gradient background
+          final loadingGradient = _getBackgroundGradient(
+            'clear',
+          ); // Use a generic color for loading
+          return Scaffold(
+            body: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: loadingGradient,
                 ),
-
-                // 2. City Name
-                const Text(
-                  'London, UK', // Dummy City Name
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                // 3. Current Date
-                 Text(
-                  'Tuesday, October 29', // Dummy Date
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+              ),
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
             ),
+          );
+        }
+        // --- B. Error State (snapshot.hasError) ---
+        else if (snapshot.hasError) {
+          // If the API call failed (e.g., wrong city name, bad API key)
+          return Scaffold(
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: Text(
+                  'Failed to fetch weather data. Error: ${snapshot.error}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.redAccent, fontSize: 18),
+                ),
+              ),
+            ),
+          );
+        }
+        // --- C. Success State (snapshot.hasData) ---
+        else if (snapshot.hasData) {
+          // Data is successfully retrieved!
+          final weatherData = snapshot.data!;
 
-                // Flexible space pushes the middle section up/down as needed
-              Expanded(
-                child: Center(
+          // Use the live weather condition to choose the background gradient
+          final gradientColors = _getBackgroundGradient(
+            weatherData.weatherCondition,
+          );
+
+          // Return your entire static UI, but populated with live data
+          return Scaffold(
+            body: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: gradientColors, // DYNAMIC BACKGROUND
+                ),
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // 1. Weather Icon (using a placeholder for now)
-                      const Icon(
-                        Icons.wb_sunny_rounded, // Placeholder icon
-                        color: Colors.white,
-                        size: 120,
+                      // TOP SECTION (DYNAMIC)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.search,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              onPressed: () {
+                                /* TODO: Phase 4 Search */
+                              },
+                            ),
+                          ),
+                          // City Name
+                          Text(
+                            weatherData.cityName, // LIVE DATA
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          // Current Date (You will need to import 'package:intl/intl.dart' for DateFormat)
+                          Text(
+                            DateFormat('EEEE, MMMM d').format(DateTime.now()),
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 10),
 
-                      // 2. Big Temperature Text
-                      const Text(
-                        '32°C', // Dummy Temperature
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 96,
-                          fontWeight: FontWeight.w300, // Thin font weight looks modern
+                      // MIDDLE SECTION (DYNAMIC)
+                      Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Icon (Simple dynamic placeholder, we enhance this next)
+                              Image.network(
+                                'https://openweathermap.org/img/wn/${weatherData.iconCode}@2x.png',
+                                height: 120, // Keep the size consistent
+                                fit: BoxFit.cover,
+                                // Optional: You can add a color filter to make the icon white
+                                color: Colors.white,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  // Show a small spinner while the image loads
+                                  return const SizedBox(
+                                    height: 120,
+                                    width: 120,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white54,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 10),
+                              // Big Temperature
+                              Text(
+                                '${weatherData.temperature.round()}°C', // LIVE DATA (rounded for display)
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 96,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              // Weather Condition Text
+                              Text(
+                                weatherData.weatherCondition
+                                    .toUpperCase(), // LIVE DATA
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 5),
 
-                      // 3. Weather Condition Text
-                      Text(
-                        HomeScreen.dummyWeatherCondition.toUpperCase(), // Using the dummy variable
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
+                      // BOTTOM DASHBOARD (DYNAMIC)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(20.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              WeatherDetailItem(
+                                icon: Icons.thermostat_outlined,
+                                label: 'Feels Like',
+                                value:
+                                    '${weatherData.feelsLike.round()}°C', // LIVE DATA
+                              ),
+                              const VerticalDivider(
+                                color: Colors.white54,
+                                width: 20,
+                                thickness: 1,
+                              ),
+                              WeatherDetailItem(
+                                icon: Icons.air,
+                                label: 'Wind Speed',
+                                value:
+                                    '${weatherData.windSpeed} km/h', // LIVE DATA
+                              ),
+                              const VerticalDivider(
+                                color: Colors.white54,
+                                width: 20,
+                                thickness: 1,
+                              ),
+                              WeatherDetailItem(
+                                icon: Icons.opacity,
+                                label: 'Humidity',
+                                value: '${weatherData.humidity}%', // LIVE DATA
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-
-                // Placeholder for Step 4: Bottom Section (Dashboard)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Container(
-                padding: const EdgeInsets.all(20.0),
-                // 💡 Add a semi-transparent background to visually group the data
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2), // The "glassmorphism" base color
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    // Detail 1: Feels Like Temperature
-                    WeatherDetailItem(
-                      icon: Icons.thermostat_outlined,
-                      label: 'Feels Like',
-                      value: '35°C', // Dummy Data
-                    ),
-
-                    // Separator Line
-                    const VerticalDivider(color: Colors.white54, width: 20, thickness: 1),
-
-                    // Detail 2: Wind Speed
-                    WeatherDetailItem(
-                      icon: Icons.air,
-                      label: 'Wind Speed',
-                      value: '15 km/h', // Dummy Data
-                    ),
-
-                    // Separator Line
-                    const VerticalDivider(color: Colors.white54, width: 20, thickness: 1),
-
-                    // Detail 3: Humidity
-                    WeatherDetailItem(
-                      icon: Icons.opacity,
-                      label: 'Humidity',
-                      value: '65%', // Dummy Data
-                    ),
-                  ],
-                ),
-              ),
             ),
-              ],
-            ),
-          ),
-        ),
-      ),
+          );
+        }
+
+        return const SizedBox.shrink();
+      },
     );
   }
 }
