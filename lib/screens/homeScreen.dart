@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:skycast/widgets/weatherDetailItem.dart';
 
+import '../models/weatherModel.dart';
 import '../services/weatherService.dart';
 
 class HomeScreen extends StatefulWidget {
