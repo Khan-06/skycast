@@ -15,6 +15,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
+  final WeatherService _weatherService = WeatherService();
+
   List<Color> _getBackgroundGradient(String condition) {
     switch (condition.toLowerCase()) {
       case 'sunny':
@@ -54,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    _weatherFuture = WeatherService.getCurrentWeather(cityName);
+    _weatherFuture = _weatherService.getCurrentWeather(cityName);
     super.initState();
   }
 
