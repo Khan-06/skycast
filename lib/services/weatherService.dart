@@ -9,9 +9,9 @@ class WeatherService {
   static const String _apiKey = openWeatherAPIKey;
 
   // Corrected implementation of the async function
-  Future<WeatherModel> getCurrentWeather(String cityName) async {
+  Future<WeatherModel> getCurrentWeather(double lat, double lon) async {
     final uri = Uri.parse(
-      '$_baseURL/weather?q=$cityName&appid=$_apiKey&units=metric',
+      '$_baseURL/weather?lat=$lat&lon=$lon&appid=$_apiKey&units=metric',
     );
 
     final response = await http.get(uri); // Await the network call
@@ -26,7 +26,7 @@ class WeatherService {
       return WeatherModel.fromJson(jsonMap);
     } else {
       throw Exception(
-          'Failed to load weather data. Status: ${response.statusCode}');
+          'Failed to load weather by location: ${response.statusCode}');
     }
   }
 }

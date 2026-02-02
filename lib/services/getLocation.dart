@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-class Getlocation {
+class GetLocation {
   double? longitude;
   double? latitude;
  static const LocationSettings locationSettings = LocationSettings(accuracy: LocationAccuracy.low, distanceFilter: 100);

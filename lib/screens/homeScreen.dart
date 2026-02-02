@@ -4,6 +4,7 @@ import 'package:skycast/widgets/weatherDetailItem.dart';
 
 import '../models/weatherModel.dart';
 import '../services/weatherService.dart';
+import '../services/getLocation.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,8 +58,27 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    _weatherFuture = _weatherService.getCurrentWeather(cityName);
+    _weatherFuture = _loadWeather();
     super.initState();
+  }
+
+  Future<WeatherModel> _loadWeather() async {
+    try {
+      GetLocation locator = GetLocation();
+      await locator.getLocation();
+
+      if (locator.latitude != null && locator.longitude != null) {
+        return await _weatherService.getCurrentWeather(
+          locator.latitude!,
+          locator.longitude!,
+        );
+      } else {
+        return await _weatherService.getCurrentWeather(0, 0);
+      }
+    } catch (e) {
+      print("Error in _loadWeather: $e");
+      return await _weatherService.getCurrentWeather(0, 0);
+    }
   }
 
   @override
